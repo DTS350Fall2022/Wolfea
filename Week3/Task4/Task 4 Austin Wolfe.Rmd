@@ -1,0 +1,87 @@
+---
+title: "R Notebook"
+output: html_notebook
+keep_md: true
+---
+
+```{r}
+library(tidyverse)
+data(iris)
+str(iris)
+```
+ 
+```{r}
+#Convert the iris data to a tibble called iris_data.
+dat <- as_tibble(iris)
+```
+ 
+```{r}
+# Arrange the iris data by Sepal.Length and display the first ten rows.
+Top_ten<- arrange(dat, Sepal.Length)
+Top_ten
+```
+ 
+ 
+```{r}
+# Select the Species and Petal.Width columns and put them into a new data set called testdat.
+testdat <- select(iris, Species, Petal.Width)
+testdat
+```
+ 
+```{r}
+# Create a new table called species_mean that has the mean for each variable for each Species.
+species_means <- dat %>%
+  group_by(Species) %>%
+  summarise(mean(Sepal.Length), mean(Sepal.Width), mean(Petal.Width), mean(Petal.Length))
+species_means
+```
+
+```{r}
+#Create a data frame called iris_min with only the observations with at least 3 for Sepal.Width and not 2.5 for Petal.Width.
+Widths <- select(dat, Sepal.Width, Petal.Width)
+iris_min <- filter(Widths, Sepal.Width >= 3, Petal.Width != 2.5)
+iris_min
+```
+
+```{r}
+#Create a data frame called iris_size with a column Sepal.Size
+iris_size <- dat %>%
+  mutate(Sepal.Size = case_when(
+    Sepal.Length < 5 ~ "Small",
+    Sepal.Length >= 5 & Sepal.Length < 6.5 ~ "Medium",
+    Sepal.Length >= 6.5 ~ "Large"))
+head(iris_size)
+```
+
+```{r}
+#Create a data frame called iris_rank which ranks all of the data by Petal.Length, where a ranking of 1 is the largest Petal.Length and order by ranking.
+iris_rank <- arrange(dat, desc(Petal.Length))
+iris_rank
+```
+ 
+```{r}
+#Read about the ?summarize_all() function and get a new table with the means and standard deviations for each species.
+Mean_std <- dat %>%
+  group_by(Species) %>%
+  summarise_all(list(Mean=mean, Std_dev = sd)) 
+Mean_std
+```
+
+#How much pollution is created by Gasoline vehicles compared to Electric and alternative fueled vehicles?
+
+#I had several people reply that gasoline vehicles produce the most pollution most were saying because of the volume rather than the individual impact of a certain vehicle. Others stated that Electric produce the most pollution because of the batteries when they are produced. 
+
+#I asked a friend of mine who is in the diesel and gasoline industry and who has done research on Electric vehicles. He did say that this a possible topic that could be answered in 2 months. He did have some criticism about electric vehicles not having a lot of open research on pollution of Electric vehicles.
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

@@ -1,0 +1,60 @@
+---
+title: "Untitled"
+author: "Austin"
+date: "8/30/2022"
+output: 
+  html_document:
+    theme:cosmo
+    keep_md: true
+    
+---
+```{r knitr}
+install.packages("knitr")
+library(knitr)
+```
+
+```{r math}
+sin(pi/4)
+x=10/3
+x
+#Austin is aloud Wolfe is not aloud
+```
+```{r}
+(x <- seq(1,50, length.out= 7))
+my_vec1 <- c(1, 5, 12, 31, 19)
+```
+
+```{r}
+7+5==12
+#== means equal to
+```
+
+```{r}
+(7+4=11)|(5-4=1)
+#| means or in this case and since the equations is = not == this is a assignment operater
+```
+
+```{r 1}
+myvariable <- 10
+myvariable
+
+```
+```{r 2}
+library(tidyverse)
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+
+filter(mpg, cyl == 8)
+filter(diamonds, carat > 3)
+#fixed code
+```
+
+```{r 3}
+#This pulls up a reference for hot keys
+```
+
+
+
+
+
