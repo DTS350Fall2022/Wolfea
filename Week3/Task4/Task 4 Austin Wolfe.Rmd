@@ -1,7 +1,8 @@
 ---
-title: "R Notebook"
-output: html_notebook
-keep_md: true
+title: "R document"
+output: 
+  html_document:
+  keep_md: TRUE
 ---
 
 ```{r}
