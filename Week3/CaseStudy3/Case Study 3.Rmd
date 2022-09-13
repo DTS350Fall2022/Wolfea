@@ -18,7 +18,7 @@ library(dplyr)
 
 
 ```{r gapminder}
-install.packages("gapminder")
+
 library(gapminder)
 head(gapminder)
 ```
