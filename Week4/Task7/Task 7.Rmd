@@ -1,0 +1,55 @@
+---
+title: "Task 7"
+author: "Austin"
+date: "9/18/2022"
+output: html_document
+keepmd: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r Loading packages}
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r Loading files}
+dat <- read.csv("heights.csv")
+head(dat)
+```
+
+```{r New data set}
+HeightEd <- dat %>%
+  mutate(ed = fct_collapse(as.factor(ed),
+  primary = c("3","4","5","6"),
+  secondary = c("7","8","9","10","11"),
+  highschoolgrad = c("12"),
+  associate = c("13","14","15"),
+  bachelors = c("16"),
+  mastorsdoctorate = c("17","18")
+))
+HeightEd   
+min(HeightEd$age, na.rm = TRUE)
+```
+
+```{r Race}
+ggplot(data = HeightEd) +
+  geom_bar(mapping = aes(x = ed, fill = race), position = position_dodge(width = 0.9)) +
+  labs(y = "People", x = "Education Levels", title = "Education levels vs race")
+```
+
+```{r Sex}
+ggplot(data = HeightEd) +
+  geom_bar(mapping = aes(x = ed, fill = sex), position = position_dodge(width = 0.9)) +
+  labs(y = "People", x = "Education levels", title = "Education levels vs Gender")
+```
+
+```{r Race vs Salary}
+ggplot(data = HeightEd) +
+  geom_boxplot(aes(x = ed, y = earn, fill = race))+
+  labs(x = "Education Levels", y = "Salary", title = "Race vs Salary")
+```
+ Analyzing this graphic it is clear that no matter what education level there is a clear correlation between salary and the white race. This can be caused by several different systematic issues occurring in our society but without having further information on this data set it is hard to compare outside factors with this graphic.
+
+       
+       
