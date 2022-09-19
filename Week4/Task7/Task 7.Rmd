@@ -2,8 +2,9 @@
 title: "Task 7"
 author: "Austin"
 date: "9/18/2022"
-output: html_document
-keepmd: TRUE
+output: 
+  html_document:
+    keepmd: TRUE
 editor_options: 
   chunk_output_type: console
 ---
@@ -29,7 +30,7 @@ HeightEd <- dat %>%
   mastorsdoctorate = c("17","18")
 ))
 HeightEd   
-min(HeightEd$age, na.rm = TRUE)
+
 ```
 
 ```{r Race}
