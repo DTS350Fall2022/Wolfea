@@ -1393,8 +1393,6 @@ HeightEd   </code></pre>
 ## 1190   8000 63.66416 female   highschoolgrad  33    white
 ## 1191  60000 71.92584   male   highschoolgrad  50    white
 ## 1192   6000 68.36849   male   highschoolgrad  27    white</code></pre>
-<pre class="r"><code>min(HeightEd$age, na.rm = TRUE)</code></pre>
-<pre><code>## [1] 18</code></pre>
 <pre class="r"><code>ggplot(data = HeightEd) +
   geom_bar(mapping = aes(x = ed, fill = race), position = position_dodge(width = 0.9)) +
   labs(y = &quot;People&quot;, x = &quot;Education Levels&quot;, title = &quot;Education levels vs race&quot;)</code></pre>
