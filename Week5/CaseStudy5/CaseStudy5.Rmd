@@ -1,0 +1,90 @@
+---
+title: "Casestudy 5"
+author: "Austin"
+date: "9/27/2022"
+output: 
+  html_document:
+  keep_md: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r Loading packages}
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r Loading files}
+download.file("https://raw.githubusercontent.com/fivethirtyeight/guns-data/master/full_data.csv", "gundata")
+dat <- read.csv("gundata")
+head(dat)
+dat
+```
+
+```{r}
+agegroups <- dat %>%
+  filter(intent != "", age != "") %>%
+  mutate(agegroup = 
+           case_when(  
+             age >= 0 & age <= 14 ~ "under 15",
+             age >= 15 & age <= 34 ~ "15-34",
+             age >= 35 & age <= 64 ~ "35-64",
+             age >= 65 ~ "65+"),
+         agegroup = fct_relevel(agegroup,
+                                "under 15", "15-34", "35-64", "65+"))
+agegroups
+```
+
+```{r Age}
+Graph1<- ggplot(data = agegroups, aes(x = agegroup, fill = sex)) +
+  geom_bar() +
+  facet_wrap(~intent, nrow = 2, scales = 'free') +
+  scale_fill_manual(values = c("#E7298A", "#0000FF"))+
+  ggtitle("Deaths by Age group caused from Guns") +
+  theme_bw()
+Graph1
+```
+Not suprising Men have a higher count for all ages for each genre of death most of the deaths are caused from homicides and suicides.
+```{r Gender}
+Graph2 <- ggplot() +
+  geom_density(data = dat, aes(x = age, fill = intent), alpha = .5, position = 'fill', adjust = 1.5) +
+  facet_wrap(~sex) +
+    scale_fill_manual(values = c("#00FF00","#D95F02","#E7298A", "#0000FF", ))+
+  labs(x = "Age", y = "Density",title = "Gun Death Density  by Gender")
+Graph2
+```
+Homicides occur mostly during younger ages under 30, Suicide rate increase as age gets higher for men while woman suicide age peaks in between the 50-70s age range. Undetermined has steady level of density but for men in their late ages spike.
+I tried to recolor with out creating a position stack but did not change the colors
+
+```{r Seasons}
+seasondat <- dat %>%
+  mutate(season = 
+            case_when(
+            month >= 1 & month <= 2 ~ "Winter",
+            month == 12 ~ "Winter",
+            month >= 4 & month <= 6 ~ "Spring",
+            month >= 5 & month <= 8 ~ "Summer",
+            month >= 9 & month <= 11 ~ "Fall",))
+seasondat
+nonull_seasondat %>%
+  filter(season != "")
+nonull_seasondat 
+
+Graph3 <- ggplot(data = nonull_seasondat, mapping = aes(x = season, fill = season)) +
+  geom_bar() +
+  facet_wrap(~sex)+
+  labs(x = 'Season', y = 'Deaths', title = 'Deaths by Season')
+Graph3
+
+Springdat <- nonull_seasondat %>%
+    filter(season == 'spring')
+
+Graph4 <- plot4 <- ggplot(data = Springdat, mapping = aes(x = intent, fill = sex)) +
+  geom_bar() +
+  facet_wrap(~sex)+
+  labs(x = 'Type', y = 'Deaths', title = 'Deaths in the Spring by Type')
+Graph4
+
+```
+Graph 3 shows the diffrent amount of deaths per season with spring having the most deaths
+Graph 4 shows just sspring data
