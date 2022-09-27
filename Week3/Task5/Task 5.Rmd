@@ -1,0 +1,68 @@
+---
+title: "Task 5"
+author: "Austin"
+date: "9/12/2022"
+output: 
+  html_document:
+  keep_md: TRUE
+code_folding: 'hide'
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r Packages}
+library(tidyverse)
+library(downloader)
+library(readxl)
+```
+Comment on the data types. Did they import correctly?
+```{r Solodata}
+SoloData <- read_csv("solo-artist-followers.csv")
+head(SoloData)
+SoloData
+problems(SoloData)
+```
+All data imported correctly as chr(characters)
+
+
+```{r}
+BillboardData <- read_csv("billboard-hits.csv")
+BillboardData
+tail(billboard)
+problems(BillboardData)
+```
+This data has the same variable as the previous dat. This data is missing several of the billboards names and bands I looked at the tail of the data and saw that not all of the data is like this. This means that it is part of the data so it imported correctly
+
+n BillboardData remove all singers who do not have at least 6 times they had a top 100 hit.
+```{r}
+at_least_six_solo <- BillboardData %>%
+  group_by(name) %>%
+  filter(n() > 6, band != "")
+at_least_six_solo
+
+bestbands <- BillboardData %>%
+  group_by(band) %>%
+  filter(band %in% at_least_six)
+head(at_least_six)
+
+Graph1 <- ggplot(data = at_least_six_solo, aes(x = peak_date, y = peak_rank, color = name, group = name)) +
+  geom_point() +
+  geom_line() +
+  geom_point(data = bestbands, color ="black") +
+  geom_line(data = bestbands, color = "black", linetype = "dotted") +
+  facet_wrap(~ band, scales = "free") +
+  xlab("peak_date") + ylab("peak_rank") +
+  theme_bw() 
+Graph1
+```
+
+```{r}
+Climate <- BillboardData <- read_csv("global_sealevel.csv")
+problems()
+
+firearms <- read_csv("nics-firearm-background-checks.csv")
+problems()
+
+natality <- read_csv("natality - natality.csv")
+```
+
