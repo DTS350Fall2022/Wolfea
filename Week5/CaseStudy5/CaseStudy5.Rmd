@@ -86,5 +86,5 @@ Graph4 <- plot4 <- ggplot(data = Springdat, mapping = aes(x = intent, fill = sex
 Graph4
 
 ```
-Graph 3 shows the diffrent amount of deaths per season with spring having the most deaths
-Graph 4 shows just sspring data
+Graph 3 shows the different amount of deaths per season with spring having the most deaths
+Graph 4 shows just spring data
