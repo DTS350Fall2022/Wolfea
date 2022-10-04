@@ -1,0 +1,48 @@
+---
+title: "Task 10"
+author: "Austin"
+date: "9/28/2022"
+output: 
+  html_document:
+    keep_md: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(ggplot2)
+library(readr)
+library(knitr)
+library(tidyverse)
+library(dplyr)
+library(forcats)
+library(downloader)
+library(corrplot)
+```
+
+
+```{r}
+dat <- read.csv("financing_healthcare.csv")
+head(dat)
+dat
+
+```
+
+```{r}
+
+By_continent <- dat %>%
+  filter(year > 1850) %>%
+  drop_na(child_mort) %>%
+  group_by(year, continent) %>%
+  summarise(avg_childmort = mean(child_mort))
+head(By_continent)
+
+  
+Graph1<- ggplot(data = By_continent, mapping = aes(x = year, y = avg_childmort, color = continent)) +
+  geom_line() +
+  labs(y = "Child Mortality Rate", x = "Year", title = "Child Mortality Rate of Over Time by continent")
+Graph1
+
+```
+After cleaning the data, You can see that most data began after the 1850 in higher mortality rated continents this could be because of lower GDPs. Europe has generally been the leader in least child mortality. Continents such as Asia, Africa, and North America started out high in the early 1900s this could be due to many factors such as WW2. The overall trend of the world is a steady decrease of child mortality around the world. In current times Erope and North america are the leaders in child morality.
+
