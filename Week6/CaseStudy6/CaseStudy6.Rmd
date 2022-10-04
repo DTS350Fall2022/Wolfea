@@ -1,0 +1,110 @@
+---
+title: "CaseStudy6"
+author: "Austin"
+date: "10/3/2022"
+output: 
+  html_document:
+    keep_md = TRUE
+editor_options: 
+  chunk_output_type: console
+---
+```{r}
+library(viridis)
+library(ggplot2)
+library(tidyverse)
+library(ggstance)
+?diamonds
+
+dat <- diamonds
+head(dat)
+str(dat)
+```
+
+```{r}
+X <- ggplot(dat, aes(x)) + 
+  geom_histogram(fill = 'red', color = 'black', binwidth = 0.25) +
+  labs(title = "Distribution of x in mm")+
+  coord_cartesian(xlim = c(3,10),ylim = c(0, 6000), expand = FALSE) +
+  theme_bw()
+X
+
+Y <- ggplot(dat, aes(y)) + 
+  geom_histogram(fill = 'red', color = 'black', binwidth = 0.25) +
+  labs(title = "Distribution of y in mm")+
+  coord_cartesian(xlim = c(3,10),ylim = c(0, 6000), expand = FALSE) +
+  theme_bw()
+Y
+
+Z <- ggplot(dat, aes(z)) + 
+  geom_histogram(fill = 'red', color = 'black', binwidth = 0.25) +
+  labs(title = "Distribution of z in mm")+
+  coord_cartesian(xlim = c(2,6),ylim = c(0, 11000), expand = FALSE) +
+  theme_bw()
+Z
+
+Price <- ggplot(dat, aes(price)) +
+  geom_histogram(fill = 'red', color = 'black') +
+  labs(x = 'Price', y = 'Frequency', title = 'Diamonds Price') +
+  theme_bw()
+Price
+
+Cutprice <- ggplot(dat, aes(x = price, y = carat, color = cut)) +
+  geom_point() + 
+  facet_wrap(~ cut) +
+  labs(x = "Price", y = "Size in Carats", title = "Cut Vs Price")
+Cutprice
+
+Colorprice <- ggplot(dat, aes(x = price, y = carat, color = color)) +
+  geom_point() + 
+  facet_wrap(~ color) +
+  labs(x = "Price", y = "Size in Carats", title = "Color Vs Price")
+Colorprice
+
+Clarityprice <- ggplot(dat, aes(x = price, y = carat, color = clarity)) +
+  geom_point() + 
+  facet_wrap(~ clarity) +
+  labs(x = "Price", y = "Size in Carats", title = "Clarity Vs Price")
+Clarityprice
+```
+The overall price histogram is right skewed and has majority of the data being less that $5000. This makes sense since the more expensive diamons are more rare compared to a common diamond which means that the rare diamonds are going to be worth more. I compared the Cuts, color, and clarity of diamonds it seems that color has very little affect to the diamonds price while the cut and clarity have signicant changes in with several diffrent types of dimonds
+```{r}
+dat %>%
+  mutate(pricegroups = 
+           case_when(
+             price >= 0 & price <= 2500 ~ '0-2500',
+             price >= 2501 & price <= 5000 ~ '2501-5000',
+             price >= 5001 & price <= 7500 ~ '5001-7500',
+             price >= 7501 & price <= 10000 ~ '7501-10000',
+             price >= 10001 & price <= 12500 ~ '10001-12500',
+             price >= 12501 & price <= 15000 ~ '12501-15000',
+             price >= 15001 & price <= 17500 ~ '15001-17500',
+            price >= 17501 & price <= 20000 - '17501-20000'),
+         pricebygroup = fct_relevel(pricebygroup, '0-2500', '5001-7500', '7501-10000', '10001-12500', '12501-15000', '15001-17500', '17501-20000'))
+pricegroups
+```
+
+```{r}
+pricegroup <- diamonds %>%
+  mutate(pricegroup =
+           case_when(
+             price >= 0 & price <= 2500 ~ '0-2500',
+             price >= 2501 & price <= 5000 ~ '2501-5000',
+             price >= 5001 & price <= 7500 ~ '5001-7501',
+             price >= 7501 & price <= 10000 ~ '7501-10000',
+             price >= 10001 & price <= 12500 ~ '10001-12500',
+             price >= 12501 & price <= 15000 ~ '12501-15000',
+             price >= 15001 & price <= 17500 ~ '15001-17500',
+             price >= 17501 & price <= 20000 ~ '17501-20000'),
+         pricegroup =  fct_relevel(pricegroup,'0-2500','2501-5000','5001-7501','7501-10000','10001-12500','12501-15000','15001-17500','17501-20000'))
+
+ggplot(pricegroup, aes(carat, price, fill = pricegroup)) +
+    geom_boxplot() +
+    scale_fill_brewer(palette = 'Blues') +
+    labs(x = 'Carat', y = 'Price', title = 'Carats vs Price', fill = "Price Ranges") +
+    coord_flip()
+    theme_bw()
+
+
+```
+
+Larger diamonds are alot more likely to cost more than that of a smaller diamond this is not much of a suprise based on high prices overall for diamonds.
