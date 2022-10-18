@@ -1,0 +1,105 @@
+---
+title: "Task12"
+author: "Austin"
+date: "10/4/2022"
+output: 
+  html_document:
+    keep_md: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r lodaing packages}
+library(tidyverse)
+library(haven)
+library(stringr)
+library(readr)
+library(haven)
+library(readxl)
+library(downloader)
+```
+
+```{r loading temp files}
+#RDS file
+dat1 <- tempfile()
+download.file("https://github.com/WJC-Data-Science/DTS350/raw/master/Dart_Expert_Dow_6month_anova/Dart_Expert_Dow_6month_anova.RDS", dat1)
+dat1 <- readRDS(dat1)
+head(dat1)
+#CSV file
+dat2 <- tempfile()
+download.file("https://github.com/WJC-Data-Science/DTS350/raw/master/Dart_Expert_Dow_6month_anova/Dart_Expert_Dow_6month_anova.csv", dat2)
+dat2 <- read_csv(dat2)
+head(dat2)
+#DTA file
+dat3 <- tempfile()
+download.file("https://github.com/WJC-Data-Science/DTS350/raw/master/Dart_Expert_Dow_6month_anova/Dart_Expert_Dow_6month_anova.dta", dat3, mode = "wb")
+dat3 <- read_dta(dat3)
+#SAV file
+head(dat3)
+dat4 <- tempfile()
+download.file("https://github.com/WJC-Data-Science/DTS350/raw/master/Dart_Expert_Dow_6month_anova/Dart_Expert_Dow_6month_anova.sav", dat4, mode = "wb")
+dat4 <- read_sav(dat4)
+head(dat4)
+#XLSX file
+dat5 <- tempfile()
+download.file("https://github.com/WJC-Data-Science/DTS350/raw/master/Dart_Expert_Dow_6month_anova/Dart_Expert_Dow_6month_anova.xlsx", dat5, mode = "wb")
+dat5 <- read_xlsx(dat5)
+head(dat5)
+
+all_equal(dat1, dat2, dat3, convert = TRUE)
+all_equal(dat3, dat4, dat5, convert = TRUE)
+```
+
+```{r Graphics}
+boxplot <- ggplot(data=dat1, aes(variable, value, fill=variable)) +
+           geom_boxplot()
+boxplot
+
+
+jitterplot <- ggplot(data = dat1, aes(variable, value, fill=variable)) +
+           geom_jitter()
+jitterplot
+
+averagereturnplot <- ggplot(data=dat1, aes(contest_period, value, group=variable, color=variable)) +
+  geom_line() +
+  facet_wrap(~variable)
+averagereturnplot
+```
+
+```{r tidying data}
+dat <- dat1 %>%
+             filter(variable == 'DJIA') %>%
+      mutate(contest_period = str_replace_all(contest_period, '19', '_19'),
+             contest_period = str_replace(contest_period, 'Febuary', 'February'),
+             contest_period = str_replace(contest_period, 'Dec._1993', 'December_1993')) %>%
+      separate(contest_period, into = c('Month', 'Year_End'), sep = '-') %>%
+      separate(Year_End, into = c('Month', 'Year'), sep = '_') %>%
+      arrange(factor(Month, levels = month.name))
+head(dat, n=10)
+saveRDS(dat, file='dat.rds')
+```
+
+```{r Returns by year(only 6 month) }
+sixmonthreturns <- ggplot(data=dat, aes( Year, value, group = Month, color = variable)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~Month)
+sixmonthreturns
+```
+
+```{r DIJA}
+DJIA <- dat1 %>%
+  filter(variable == "DJIA") %>%
+  mutate(contest_period = str_replace_all(contest_period, "19", "_19"),
+         contest_period = str_replace(contest_period, "Febuary", "February"),
+         contest_period = str_replace(contest_period, "Dec._1993", "December_1993")) %>%
+  separate(contest_period, into = c("Month", "Year_end"), sep = "-") %>%
+  separate(Year_end, into = c("Month", "Year"), sep = "_") %>%
+  pivot_wider(names_from = "Year", values_from = "value") %>%
+  arrange(factor(Month, levels = month.name)) %>%
+  select(-variable)
+
+DJIA
+
+```
+
