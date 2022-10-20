@@ -1,0 +1,72 @@
+---
+title: "Task14"
+author: "Austin"
+date: "10/19/2022"
+output: 
+  html_document:
+    keep_md: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r loading packages}
+library(knitr)
+library(tidyverse)
+library(downloader)
+library(corrplot)
+library(stringi)
+library(stringr)
+library(dplyr)
+library(ggplot2)
+library(haven)
+library(readxl)
+```
+
+```{r loading CSV}
+dat <- tempfile()
+download.file("https://github.com/WJC-Data-Science/DTS350/raw/master/bible.csv", "dat")
+dat <- read.csv("dat")
+head(dat)
+dat
+```
+
+```{r Old and New testament }
+
+word <- dat %>%
+  mutate(wordcount =
+           sapply(dat$scripture_text, function(x) length(unlist(strsplit(as.character(x), "\\W+")))))
+
+new <- word %>%
+  subset(volume_title == 'New Testament')
+head(new)
+mean(new$wordcount)
+
+old <- word %>%
+  subset(volume_title == 'Old Testament')
+mean(old$wordcount)
+
+
+```
+
+```{r}
+str_count(old, "(?i)lord")
+str_count(new, "(?i)lord")
+```
+
+```{r}
+new2 <- dat %>%
+  filter(volume_title == "New Testament") %>%
+  select(book_title, verse_id, scripture_text,verse_number) %>%
+  mutate(wordcount = str_count(scripture_text,'\\w+')) %>%
+  group_by(book_title)
+new2
+
+
+ggplot(data = new2, aes(x = verse_number, y = wordcount, fill = book_title)) +
+  geom_boxplot() +
+  theme(legend.position = "none") +
+  labs(x = "Verse",
+       y = "Word Count",
+       title = "Average Word By Verse Number of New Testament")
+```
+
