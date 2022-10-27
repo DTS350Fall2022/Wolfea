@@ -1,0 +1,92 @@
+---
+title: "Task15"
+author: "Austin"
+date: "10/20/2022"
+output: 
+  html_document:
+    keep_md: TRUE
+    code_folding: "hide"
+editor_options: 
+  chunk_output_type: console
+---
+```{r}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+
+```{r}
+library(knitr)
+library(tidyverse)
+library(downloader)
+library(corrplot)
+library(stringi)
+library(stringr)
+library(dplyr)
+library(ggplot2)
+library(haven)
+library(readxl)
+library(lubridate)
+library(readr) 
+library(haven)
+library(riem)
+```
+
+```{r}
+dat <- tempfile()
+download.file("https://github.com/WJC-Data-Science/DTS350/raw/master/carwash.csv", "dat")
+dat <- read.csv("dat")
+head(dat)
+tail(dat)
+str(dat)
+```
+
+```{r Changing time zones}
+change <- with_tz(dat, tzone = "US/Mountain")
+head(change)
+```
+
+```{r Ceiling date}
+change2 <- change %>%
+  mutate(hour = ceiling_date(time, "hour"))
+head(change2)
+```
+
+```{r Aggregate}
+change3 <- change2 %>%
+  group_by(hour) %>%
+  summarise(across(amount, sum))
+
+```
+
+```{r Riem}
+riemdata <- riem_measures(station = "RXE",  date_start ="2016-05-13" , date_end  ="2016-07-08") %>%
+  with_tz(tzone = "US/Mountain") %>%
+  drop_na(tmpf) %>%
+  mutate(hour = ceiling_date(valid, "hour")) %>%
+  filter(tmpf != "") %>%
+  select(hour, tmpf)
+head(riemdata)
+```
+
+```{r merging}
+Mergeofdata <- merge(riemdata, change3, by = "hour") %>%
+  arrange(hour) %>%
+  mutate(hours = hour(hour)) %>%
+  group_by(hours) 
+```
+
+```{r}
+saleshour <- ggplot(data = MergedDat, mapping = aes(x = hours, y = amount, color = tmpf)) +
+  geom_point(size = 7, alpha=0.5) +
+  scale_color_gradient(low = "#800080", high = "#FF00FF") +
+  labs(title = "Relationship between Sales and Temperature", subtitle = "Grouped by Hour of the Day (24-Hour Clock)", x = "Time of Day (Hour)", y = "Sales Amounts in $", fill = "Temperature in Fahrenheit") +
+ theme()
+```
+
+```{r Graphic}
+hoursales <- ggplot(data = mergedofdata, mapping = aes(tmpf, amount)) +
+  geom_col() +
+  labs(title = "Sales based on time of year", x = "Temperatue", y = "Sales") +
+  theme()
+```
+
