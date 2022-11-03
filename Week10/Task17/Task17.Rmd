@@ -1,0 +1,96 @@
+---
+title: "Task17"
+author: "Austin"
+date: "11/1/2022"
+output: 
+  html_document:
+    keep_md: TRUE
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(knitr)
+library(tidyverse)
+library(downloader)
+library(corrplot)
+library(stringi)
+library(stringr)
+library(dplyr)
+library(ggplot2)
+library(haven)
+library(readxl)
+library(lubridate)
+library(readr) 
+library(haven)
+library(riem)
+library(tidyquant)
+library(timetk)
+library(DT) 
+library(dygraphs)
+
+```
+
+```{r my friend and I stocks}
+#my friend
+(Disney <- tq_get("DIS", get = "stock.prices"))
+(Starbucks <- tq_get("SBUX", get = "stock.prices"))
+(Yum <- tq_get("YUM", get = "stock.prices"))
+#mine
+(Hershey <- tq_get("HSY", get = "stock.prices"))
+(Nintendo <- tq_get("NTDOY", get = "stock.prices"))
+(BMW <- tq_get("BMWYY", get = "stock.prices"))
+```
+
+```{r}
+
+friend <- tq_get(c("DIS", "SBUX", "YUM"), get = "stock.prices", from = "2021-10-02", to = today())
+head(friend)                   
+tail(friend)
+
+
+mine <- tq_get(c("HSY", "NTDOY", "BMWYY"), get = "stock.prices", from = "2021-10-01", to = today())
+head(mine)
+tail(mine)
+
+both <- tq_get(c("DIS", "SBUX", "YUM","HSY", "NTDOY", "BMWYY"), get = "stock.prices", from = "2021-10-01", to = today())
+
+```
+
+```{r}
+#graphic 1
+friend %>%
+  ggplot(aes(x = date, y = close)) +
+  geom_candlestick(aes(open = open, high = high, low = low, close = close)) +
+  facet_wrap(~symbol)+
+  labs(title = "Friend Candlestick Chart",
+       subtitle = "November 2021 to November 2022",
+       y = "Closing Price", x = "") + 
+  theme_tq()
+
+mine %>%
+  ggplot(aes(x = date, y = close)) +
+  geom_candlestick(aes(open = open, high = high, low = low, close = close)) +
+  facet_wrap(~symbol)+
+  labs(title = "My Candlestick Chart",
+       subtitle = "November 2021 to November 2022",
+       y = "Closing Price", x = "") + 
+  theme_tq()
+
+#graphic 2
+Both2 <- both %>%
+  select(symbol, date, adjusted) %>%
+  pivot_wider(names_from = symbol, values_from = adjusted) %>%
+  tk_xts(date_var = date)
+head(Both2)
+
+dygraph(Both2, main = "My friends and my stocks") %>%
+  dyRebase(percent = TRUE) %>%
+  dyShading(from = "2021-10-01", to = today()) %>%
+  dyRangeSelector()
+```
+Both me and my friend chose stocks based on companys that we like with little attention to the actual stock. Overall my stocks did the best with Herseys being the only stock to actually improve since the large dip in stocks in march of 2022. As well my other stocks have more volume than my friends which doesnt mean that they better but it adds to why my stocks won.
